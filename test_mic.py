@@ -2,7 +2,7 @@ import sounddevice as sd
 import numpy as np
 from scipy.io.wavfile import write
 
-duration = 3  # seconds
+duration = 3  #seconds
 fs = 16000  # sample rate
 
 print("🎤 Speak now...")
