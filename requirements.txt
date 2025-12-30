@@ -1,0 +1,7 @@
+streamlit
+numpy
+scipy
+python-dotenv
+openai
+groq
+requests
