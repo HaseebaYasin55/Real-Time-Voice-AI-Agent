@@ -1,6 +1,5 @@
 import streamlit as st
 import tempfile
-import pyttsx3
 from groq import Groq
 import os
 from dotenv import load_dotenv
@@ -52,9 +51,13 @@ if uploaded_file is not None:
     response_text = completion.choices[0].message["content"].strip()
     st.text_area("AI Agent says:", response_text, height=250, key="ai_response")
 
-    # Generate AI voice
-    engine = pyttsx3.init()
+    # Generate AI voice using OpenAI TTS
+    tts = openai.audio.speech.create(
+        model="gpt-4o-mini-tts",
+        voice="alloy",
+        input=response_text
+    )
+
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as audio_file:
-        engine.save_to_file(response_text, audio_file.name)
-        engine.runAndWait()
+        audio_file.write(tts.read())
         st.audio(audio_file.name, format="audio/mp3")

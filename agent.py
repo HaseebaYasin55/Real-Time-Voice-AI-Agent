@@ -3,7 +3,6 @@ import numpy as np
 import tempfile
 from scipy.io.wavfile import write
 from groq import Groq
-import pyttsx3
 import os
 import openai
 import re
@@ -48,7 +47,7 @@ def generate_response(user_text):
         "Write smooth, flowing paragraphs that sound natural when read aloud."
     )
 
-    completion = openai.ChatCompletion.create(
+    completion = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": system_prompt},
@@ -57,14 +56,21 @@ def generate_response(user_text):
         temperature=0.7
     )
 
-    response = completion.choices[0].message.content.strip()
+    response = completion.choices[0].message["content"].strip()
     print("\n🤖 Agent (clean paragraph):", response)
     return response
 
 def speak(text):
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
+    # Generate TTS audio using OpenAI
+    tts = openai.audio.speech.create(
+        model="gpt-4o-mini-tts",
+        voice="alloy",
+        input=text
+    )
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as audio_file:
+        audio_file.write(tts.read())
+        print(f"🎧 AI voice saved at: {audio_file.name}")
+    # Optionally, you can play this file using your preferred local audio player
 
 if __name__ == "__main__":
     print("🚀 Voice AI Agent Ready!")
